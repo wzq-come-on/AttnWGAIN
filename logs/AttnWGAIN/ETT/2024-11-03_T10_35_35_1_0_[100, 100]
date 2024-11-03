@@ -1,0 +1,9 @@
+2024-11-03 10:35:35,325 - Namespace(MIT=True, alpha=[100, 100], batch_size=128, best_imputation_MAE=1.0, best_imputation_MAE_Threshold=0.9, best_imputation_MRE=2.0, best_imputation_MRE_Threshold=2.0, best_imputation_RMSE=2.0, best_imputation_RMSE_Threshold=2.0, d_inner=512, d_k=32, d_model=256, d_v=32, data_path='data/ETTm1_seqlen24_01masked', device='cuda', diagonal_attention_mask=True, dropout=0.0, epochs=10000, epochs_D=1, epochs_G=1, feature_num=7, hint_rate=0, lambda_gp=10, log_saving='./logs\\AttnWGAIN\\ETT', lr=0.001, min_mae_loss=0.5, miss_rate=0.1, model='AttnWGAIN', model_type='AttentionGAN', n_group_inner_layers=5, n_groups=1, n_head=1, num_workers=1, optimizer_type='adam', saving_impute_path='data/physio2012_37feats_01masked', saving_model_path='./SavedModel\\AttnWGAIN\\ETT', seed=2023, seq_len=24, stage='train', weight_decay=0.0)
+2024-11-03 10:35:38,499 - [Epoch 0/10000] [Batch 9] [D loss: -0.321556] [G loss: 67.229973]
+2024-11-03 10:35:39,156 - [Epoch 0/10000] [Batch 19] [D loss: -0.316963] [G loss: 25.890118]
+2024-11-03 10:35:39,849 - [Epoch 0/10000] [Batch 29] [D loss: -0.321690] [G loss: 13.371750]
+2024-11-03 10:35:41,703 - [Epoch 0/10000] [validating MAE loss: 0.272909]
+2024-11-03 10:35:41,709 - Save Model [model_imputation_MAE_0.2729] 
+2024-11-03 10:35:41,709 - [Epoch 0/10000] [validating RMSE loss: 0.350329]
+2024-11-03 10:35:41,716 - [Epoch 0/10000] [validating MRE loss: 0.353811]
+2024-11-03 10:35:41,721 - ---------------·Ö¸îÏß-----------------
