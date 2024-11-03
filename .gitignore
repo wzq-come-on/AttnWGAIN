@@ -1,0 +1,6 @@
+.idea
+__pycache__
+/E2GAN/set-a/test
+/E2GAN/set-a/train
+/E2GAN/set-a/val
+/data
