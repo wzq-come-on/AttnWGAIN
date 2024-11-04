@@ -1,6 +1,6 @@
 # AttnWGAIN
 ````commandline
-主要的包
+Main package
 python = 3.8
 h5py==3.12.1
 numpy==1.26.4
