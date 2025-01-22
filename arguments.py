@@ -16,9 +16,9 @@ def AttnWGAIN_arguments():
         'data/physio2012_37feats_01masked',
         'data/ETTm1_seqlen24_01masked',
     ], default='data/ETTm1_seqlen24_01masked', help="Select the dataset")
-    parser.add_argument("--seq_len", type=int, default=48, help="数据集中的时序长度")
-    parser.add_argument("--feature_num", type=int, default=37, help="数据集中的特征数目")
-    parser.add_argument('--seed', type=int, default=2023, help='构造缺失数据的缺失率')
+    parser.add_argument("--seq_len", type=int, default=48, help="Time Series Length")
+    parser.add_argument("--feature_num", type=int, default=37, help="Feature count in the dataset")
+    parser.add_argument('--seed', type=int, default=2023, help='Missing rate of constructed missing data')
     parser.add_argument('--model', type=str, choices=['AttnWGAIN'],\
                         default='AttnWGAIN', help="模型选择")
 
