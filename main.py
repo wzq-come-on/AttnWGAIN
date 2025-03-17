@@ -77,7 +77,7 @@ def validate(args, generator, discriminator, val_dataloader, logger,epoch):
     with torch.no_grad():
         for idx, data in enumerate(val_dataloader):
             indices, X, missing_mask, H, deltaPre, X_holdout, indicating_mask = map(lambda x: x.to(args.device), data)
-
+            
             evalX_collector.append(X_holdout)
             evalMask_collector.append(indicating_mask)
 
@@ -92,7 +92,7 @@ def validate(args, generator, discriminator, val_dataloader, logger,epoch):
             deltaPre_cpu = deltaPre.cpu().numpy()
             deltaPre_normalized = normalize_3d_array(deltaPre_cpu)
             deltaPre_normalized = torch.tensor(deltaPre_normalized, dtype=torch.float32).to('cuda')
-            G_sample = generator(X, missing_mask, deltaPre_normalized)
+            G_sample,_ = generator(X, missing_mask, deltaPre_normalized)
             # logger.info(G_sample)
             # 将缺失部分的生成数据+未缺失部分的真实数据
             Hat_X = missing_mask * X + (1 - missing_mask) * G_sample
@@ -246,7 +246,7 @@ def test(args, test_dataloader, logger=None , train_data=None, val_data=None, te
                     deltaPre_cpu = deltaPre.cpu().numpy()
                     deltaPre_normalized = normalize_3d_array(deltaPre_cpu)
                     deltaPre_normalized = torch.tensor(deltaPre_normalized, dtype=torch.float32).to('cuda')
-                    G_sample = generator(X, missing_mask, deltaPre_normalized)
+                    G_sample,_ = generator(X, missing_mask, deltaPre_normalized)
                     Hat_X = missing_mask * X + (1 - missing_mask) * G_sample
                     imputations_collector.append(Hat_X)
 
@@ -280,7 +280,7 @@ def test(args, test_dataloader, logger=None , train_data=None, val_data=None, te
 
         else:
             print(Exception)
-
+import time
 def trainAndValidate(args,train_dataloader, val_dataloader, logger):
     generator = Generator(args.n_groups, args.n_group_inner_layers, args.seq_len, args.feature_num, args.d_model, args.d_inner, args.n_head, args.d_k, args.d_v, args.dropout, args.diagonal_attention_mask, args.device)
     discriminator = Discriminator(args.n_groups, args.n_group_inner_layers, args.seq_len, args.feature_num, args.d_model, args.d_inner, args.n_head, args.d_k, args.d_v, args.dropout, args.diagonal_attention_mask, args.device)
@@ -307,17 +307,17 @@ def trainAndValidate(args,train_dataloader, val_dataloader, logger):
             for j in range(args.epochs_D):
                 Z = np.random.uniform(0, 0.01, size=X.shape)
                 Z = torch.from_numpy(Z.astype('float32')).to(args.device)
-
                 X_copy = copy.deepcopy(X)
                 X = missing_mask * X + (1 - missing_mask) * Z
-  
                 deltaPre_cpu = deltaPre.cpu().numpy()
                 deltaPre_normalized = normalize_3d_array(deltaPre_cpu)
                 deltaPre_normalized = torch.tensor(deltaPre_normalized, dtype=torch.float32).to('cuda')
-                G_sample = generator(X, missing_mask, deltaPre_normalized).detach()
+                G_sample,G_sample_base = generator(X, missing_mask, deltaPre_normalized)
+                G_sample.detach()
+                G_sample_base.detach()
                 Hat_X = missing_mask * X + (1 - missing_mask) * G_sample
                 D_prob = discriminator(Hat_X, H)
-                loss_D = d_loss(X, missing_mask, G_sample, D_prob, X_holdout, indicating_mask, args.alpha)
+                loss_D = d_loss(X, missing_mask, G_sample_base, D_prob, X_holdout, indicating_mask, args.alpha)
                 gradient_penalty = compute_gradient_penalty(args, discriminator, X_copy, G_sample, H)
                 optimizer_D.zero_grad()
                 (loss_D++ args.lambda_gp * gradient_penalty).backward()
@@ -330,10 +330,10 @@ def trainAndValidate(args,train_dataloader, val_dataloader, logger):
                 deltaPre_cpu = deltaPre.cpu().numpy()
                 deltaPre_normalized = normalize_3d_array(deltaPre_cpu)
                 deltaPre_normalized = torch.tensor(deltaPre_normalized, dtype=torch.float32).to('cuda')
-                G_sample  = generator(X, missing_mask, deltaPre_normalized)
+                G_sample,G_sample_base  = generator(X, missing_mask, deltaPre_normalized)
                 Hat_X = missing_mask * X + (1 - missing_mask) * G_sample
                 D_prob = discriminator(Hat_X, H).detach()
-                loss_G = g_loss(X, missing_mask, G_sample, D_prob, X_holdout, indicating_mask, args.alpha)
+                loss_G = g_loss(X, missing_mask, G_sample_base, D_prob, X_holdout, indicating_mask, args.alpha)
                 optimizer_G.zero_grad()
                 loss_G.backward()
                 optimizer_G.step()

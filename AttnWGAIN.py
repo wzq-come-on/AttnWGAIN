@@ -158,7 +158,7 @@ class Attention_WGAIN(nn.Module):
         
         result_1 = self.reduce_dim(enc_output)
         result_temp = masks * X + (1 - masks) * result_1
-        return result_temp
+        return result_temp,result_1
 
 
 class Discriminator(nn.Module):
@@ -203,7 +203,7 @@ class D_loss(nn.Module):
     def forward(self, X, M, G_sample, D_prob, X_holdout, indicating_mask, alpha):
         return torch.mean((1-M) * D_prob) - torch.mean(M * D_prob)
 
-
+import time
 class G_loss(nn.Module):
     def __init__(self):
         super().__init__()
